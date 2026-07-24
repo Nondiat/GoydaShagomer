@@ -1,5 +1,5 @@
 {
-  "name": "GoydaShagomer",
+  "name": "Goyda shagomer",
   "description": "Простой MD3 шагомер с интерактивными графиками, виджетом 2х2 и поддержкой синхронизации с Google Health.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

@@ -86,7 +86,7 @@ fun RotatingFooter(
         Spacer(modifier = Modifier.height(2.dp))
 
         Text(
-            text = "Версия 1",
+            text = "Версия 1.1",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
         )

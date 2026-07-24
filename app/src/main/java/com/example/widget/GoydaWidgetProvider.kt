@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -13,10 +14,13 @@ import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Shader
+import android.os.Build
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
 import com.example.MainActivity
 import com.example.R
 import com.example.data.AppDatabase
+import com.example.data.AppThemeSetting
 import com.example.data.EnergyUnitSetting
 import com.example.data.UserSettingsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -75,13 +79,21 @@ class GoydaWidgetProvider : AppWidgetProvider() {
 
                 val durationFormatted = "$durationMins"
 
+                val currentUiMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                val isNightMode = currentUiMode == Configuration.UI_MODE_NIGHT_YES
+                val isDark = when (settings.theme) {
+                    AppThemeSetting.DARK, AppThemeSetting.AMOLED -> true
+                    AppThemeSetting.LIGHT -> false
+                    AppThemeSetting.SYSTEM -> isNightMode
+                }
+
                 val bitmap = renderWidgetBitmap(
                     context = context,
                     steps = steps,
                     goal = goal,
                     durationText = durationFormatted,
                     energyText = energyFormatted,
-                    isDark = true
+                    isDark = isDark
                 )
 
                 val views = RemoteViews(context.packageName, R.layout.goyda_widget_layout)
@@ -114,9 +126,65 @@ class GoydaWidgetProvider : AppWidgetProvider() {
             val radius = size * 0.40f
             val strokeWidth = size * 0.08f
 
-            // Card background (MD3 pill card - dark surface)
+            // Material You dynamic surface & colors
+            var cardBgColor = if (isDark) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    try {
+                        ContextCompat.getColor(context, android.R.color.system_neutral1_800)
+                    } catch (e: Exception) {
+                        Color.parseColor("#222A32")
+                    }
+                } else {
+                    Color.parseColor("#222A32")
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    try {
+                        ContextCompat.getColor(context, android.R.color.system_neutral1_100)
+                    } catch (e: Exception) {
+                        Color.parseColor("#EBF2F5")
+                    }
+                } else {
+                    Color.parseColor("#EBF2F5")
+                }
+            }
+
+            // Ensure that on AMOLED/Dark theme the background never turns pitch black (#000000 or < 22 RGB)
+            if (isDark) {
+                val r = Color.red(cardBgColor)
+                val g = Color.green(cardBgColor)
+                val b = Color.blue(cardBgColor)
+                if (r < 22 && g < 22 && b < 22) {
+                    cardBgColor = Color.rgb(0x22, 0x2A, 0x32) // Tinted Material You surface container
+                }
+            }
+
+            val primaryAccent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    ContextCompat.getColor(context, if (isDark) android.R.color.system_accent1_200 else android.R.color.system_accent1_600)
+                } catch (e: Exception) {
+                    if (isDark) Color.parseColor("#9ECAFF") else Color.parseColor("#0061A4")
+                }
+            } else {
+                if (isDark) Color.parseColor("#00BCD4") else Color.parseColor("#00838F")
+            }
+
+            val trackColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    ContextCompat.getColor(context, if (isDark) android.R.color.system_neutral2_700 else android.R.color.system_neutral2_200)
+                } catch (e: Exception) {
+                    if (isDark) Color.parseColor("#33404D") else Color.parseColor("#D0DCDE")
+                }
+            } else {
+                if (isDark) Color.parseColor("#33404D") else Color.parseColor("#D0DCDE")
+            }
+
+            val textColorPrimary = if (isDark) Color.WHITE else Color.parseColor("#101415")
+            val textColorSecondary = if (isDark) Color.parseColor("#B0BEC5") else Color.parseColor("#455A64")
+
+            // Card background (MD3 pill card - Material You dynamic surface)
             val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor("#12191B")
+                color = cardBgColor
                 style = Paint.Style.FILL
             }
             val bgRect = RectF(8f, 8f, size - 8f, size - 8f)
@@ -124,7 +192,7 @@ class GoydaWidgetProvider : AppWidgetProvider() {
 
             // Progress Track
             val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor("#263238")
+                color = trackColor
                 style = Paint.Style.STROKE
                 this.strokeWidth = strokeWidth
                 strokeCap = Paint.Cap.ROUND
@@ -145,27 +213,27 @@ class GoydaWidgetProvider : AppWidgetProvider() {
                 style = Paint.Style.STROKE
                 this.strokeWidth = strokeWidth
                 strokeCap = Paint.Cap.ROUND
-                color = Color.parseColor("#00BCD4")
+                color = primaryAccent
             }
             canvas.drawArc(oval, -90f, sweepAngle, false, progressPaint)
 
             // Inner Center Text Paints
             val textPaintPrimary = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.WHITE
+                color = textColorPrimary
                 textSize = size * 0.11f
                 textAlign = Paint.Align.LEFT
                 isFakeBoldText = true
             }
 
             val textPaintSecondary = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor("#B0BEC5")
+                color = textColorSecondary
                 textSize = size * 0.075f
                 textAlign = Paint.Align.LEFT
                 isFakeBoldText = true
             }
 
             val textPaintAccent = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor("#80DEEA")
+                color = primaryAccent
                 textSize = size * 0.075f
                 textAlign = Paint.Align.LEFT
                 isFakeBoldText = true
@@ -176,13 +244,13 @@ class GoydaWidgetProvider : AppWidgetProvider() {
 
             // Load MD3 vector icons
             val stepsDrawable = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.ic_widget_steps)?.apply {
-                setTint(Color.WHITE)
+                setTint(textColorPrimary)
             }
             val timerDrawable = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.ic_widget_timer)?.apply {
-                setTint(Color.parseColor("#B0BEC5"))
+                setTint(textColorSecondary)
             }
             val fireDrawable = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.ic_widget_fire)?.apply {
-                setTint(Color.parseColor("#80DEEA"))
+                setTint(primaryAccent)
             }
 
             // Line 1: Steps
