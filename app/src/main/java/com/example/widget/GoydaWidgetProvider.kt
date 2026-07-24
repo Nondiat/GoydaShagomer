@@ -68,20 +68,15 @@ class GoydaWidgetProvider : AppWidgetProvider() {
                 val goal = settings.dailyStepGoal.coerceAtLeast(1)
 
                 val energyFormatted = when (settings.energyUnit) {
-                    EnergyUnitSetting.KCAL -> "${totalCals.toInt()} ккал"
-                    EnergyUnitSetting.CAL -> "${(totalCals * 1000).toInt()} кал"
-                    EnergyUnitSetting.KJ -> "${(totalCals * 4.184f).toInt()} кДж"
+                    EnergyUnitSetting.KCAL -> "${totalCals.toInt()}"
+                    EnergyUnitSetting.CAL -> "${(totalCals * 1000).toInt()}"
+                    EnergyUnitSetting.KJ -> "${(totalCals * 4.184f).toInt()}"
                 }
 
-                val durationFormatted = if (durationMins >= 60) {
-                    val hrs = durationMins / 60
-                    val mins = durationMins % 60
-                    "${hrs}ч ${mins}м"
-                } else {
-                    "${durationMins}м"
-                }
+                val durationFormatted = "$durationMins"
 
                 val bitmap = renderWidgetBitmap(
+                    context = context,
                     steps = steps,
                     goal = goal,
                     durationText = durationFormatted,
@@ -104,6 +99,7 @@ class GoydaWidgetProvider : AppWidgetProvider() {
         }
 
         private fun renderWidgetBitmap(
+            context: Context,
             steps: Int,
             goal: Int,
             durationText: String,
@@ -118,12 +114,12 @@ class GoydaWidgetProvider : AppWidgetProvider() {
             val radius = size * 0.40f
             val strokeWidth = size * 0.08f
 
-            // Card background (MD3 pill card)
+            // Card background (MD3 pill card - dark surface)
             val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.parseColor("#12191B")
                 style = Paint.Style.FILL
             }
-            val bgRect = RectF(10f, 10f, size - 10f, size - 10f)
+            val bgRect = RectF(8f, 8f, size - 8f, size - 8f)
             canvas.drawRoundRect(bgRect, 48f, 48f, bgPaint)
 
             // Progress Track
@@ -141,7 +137,7 @@ class GoydaWidgetProvider : AppWidgetProvider() {
             )
             canvas.drawArc(oval, 0f, 360f, false, trackPaint)
 
-            // Progress Arc Fill
+            // Progress Arc Fill - Solid Material You color (no gradient)
             val progressRatio = (steps.toFloat() / goal).coerceIn(0f, 1f)
             val sweepAngle = progressRatio * 360f
 
@@ -149,43 +145,87 @@ class GoydaWidgetProvider : AppWidgetProvider() {
                 style = Paint.Style.STROKE
                 this.strokeWidth = strokeWidth
                 strokeCap = Paint.Cap.ROUND
-                shader = LinearGradient(
-                    0f, 0f, size.toFloat(), size.toFloat(),
-                    Color.parseColor("#00BCD4"),
-                    Color.parseColor("#4CAF50"),
-                    Shader.TileMode.CLAMP
-                )
+                color = Color.parseColor("#00BCD4")
             }
             canvas.drawArc(oval, -90f, sweepAngle, false, progressPaint)
 
-            // Inner Center Text
+            // Inner Center Text Paints
             val textPaintPrimary = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.WHITE
-                textSize = size * 0.12f
-                textAlign = Paint.Align.CENTER
+                textSize = size * 0.11f
+                textAlign = Paint.Align.LEFT
                 isFakeBoldText = true
             }
 
             val textPaintSecondary = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.parseColor("#B0BEC5")
                 textSize = size * 0.075f
-                textAlign = Paint.Align.CENTER
+                textAlign = Paint.Align.LEFT
+                isFakeBoldText = true
             }
 
             val textPaintAccent = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.parseColor("#80DEEA")
                 textSize = size * 0.075f
-                textAlign = Paint.Align.CENTER
+                textAlign = Paint.Align.LEFT
+                isFakeBoldText = true
             }
 
-            // Draw steps with icon
-            canvas.drawText("🚶 $steps", center, center - size * 0.10f, textPaintPrimary)
+            val iconDim = (size * 0.07f).toInt()
+            val spacing = size * 0.02f
 
-            // Draw time walked
-            canvas.drawText("⏱️ $durationText", center, center + size * 0.06f, textPaintSecondary)
+            // Load MD3 vector icons
+            val stepsDrawable = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.ic_widget_steps)?.apply {
+                setTint(Color.WHITE)
+            }
+            val timerDrawable = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.ic_widget_timer)?.apply {
+                setTint(Color.parseColor("#B0BEC5"))
+            }
+            val fireDrawable = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.ic_widget_fire)?.apply {
+                setTint(Color.parseColor("#80DEEA"))
+            }
 
-            // Draw energy
-            canvas.drawText("🔥 $energyText", center, center + size * 0.20f, textPaintAccent)
+            // Line 1: Steps
+            val stepsStr = "$steps"
+            val stepsTextWidth = textPaintPrimary.measureText(stepsStr)
+            val line1Width = iconDim + spacing + stepsTextWidth
+            val line1StartX = center - (line1Width / 2f)
+            val line1Y = center - size * 0.08f
+
+            stepsDrawable?.let {
+                val iconTop = (line1Y - iconDim + size * 0.015f).toInt()
+                it.setBounds(line1StartX.toInt(), iconTop, (line1StartX + iconDim).toInt(), iconTop + iconDim)
+                it.draw(canvas)
+            }
+            canvas.drawText(stepsStr, line1StartX + iconDim + spacing, line1Y, textPaintPrimary)
+
+            // Line 2: Duration in minutes
+            val durationStr = durationText
+            val durationTextWidth = textPaintSecondary.measureText(durationStr)
+            val line2Width = iconDim + spacing + durationTextWidth
+            val line2StartX = center - (line2Width / 2f)
+            val line2Y = center + size * 0.07f
+
+            timerDrawable?.let {
+                val iconTop = (line2Y - iconDim + size * 0.01f).toInt()
+                it.setBounds(line2StartX.toInt(), iconTop, (line2StartX + iconDim).toInt(), iconTop + iconDim)
+                it.draw(canvas)
+            }
+            canvas.drawText(durationStr, line2StartX + iconDim + spacing, line2Y, textPaintSecondary)
+
+            // Line 3: Energy
+            val energyStr = energyText
+            val energyTextWidth = textPaintAccent.measureText(energyStr)
+            val line3Width = iconDim + spacing + energyTextWidth
+            val line3StartX = center - (line3Width / 2f)
+            val line3Y = center + size * 0.20f
+
+            fireDrawable?.let {
+                val iconTop = (line3Y - iconDim + size * 0.01f).toInt()
+                it.setBounds(line3StartX.toInt(), iconTop, (line3StartX + iconDim).toInt(), iconTop + iconDim)
+                it.draw(canvas)
+            }
+            canvas.drawText(energyStr, line3StartX + iconDim + spacing, line3Y, textPaintAccent)
 
             return bitmap
         }

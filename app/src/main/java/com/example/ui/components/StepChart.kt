@@ -94,43 +94,46 @@ fun StepChart(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = titleText,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                // 3 buttons: "<", ">", Calendar
+                // Clickable date title in top-left
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { onCalendarClicked() }
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = titleText,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                // 3 buttons: "<", ">", Calendar (icon-only, no dark circular backgrounds)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
                     IconButton(
                         onClick = onPreviousClicked,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surface)
+                        modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "Предыдущий интервал",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
                     IconButton(
                         onClick = onNextClicked,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surface)
+                        modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = "Следующий интервал",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -139,13 +142,13 @@ fun StepChart(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f))
                     ) {
                         Icon(
                             imageVector = Icons.Default.CalendarToday,
                             contentDescription = "Выбрать дату",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(20.dp)
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
@@ -250,6 +253,9 @@ fun StepChart(
 
                             // Draw Bars
                             items.forEachIndexed { index, item ->
+                                // Blank empty gap when steps is 0 (do not draw bar/point)
+                                if (item.steps <= 0) return@forEachIndexed
+
                                 val xCenter = (index * slotWidth) + (slotWidth / 2f)
                                 val barLeft = xCenter - (barWidth / 2f)
                                 val barHeightRatio = (item.steps.toFloat() / maxSteps).coerceIn(0f, 1f)
@@ -258,16 +264,15 @@ fun StepChart(
 
                                 val isSelected = (index == selectedIndex)
 
-                                val barBrush = Brush.verticalGradient(
-                                    colors = if (isSelected) {
-                                        listOf(GoydaCyan, GoydaEmerald)
-                                    } else {
-                                        listOf(primaryColor, primaryColor.copy(alpha = 0.6f))
-                                    }
-                                )
+                                // Solid monotone colors matching Material You palette
+                                val barColor = if (isSelected) {
+                                    primaryColor
+                                } else {
+                                    primaryColor.copy(alpha = 0.45f)
+                                }
 
                                 drawRoundRect(
-                                    brush = barBrush,
+                                    color = barColor,
                                     topLeft = Offset(barLeft, barTop),
                                     size = Size(barWidth, barHeight),
                                     cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
@@ -329,7 +334,7 @@ fun StepChart(
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                                             )
                                             Text(
-                                                text = "🚶 ${item.steps} шагов",
+                                                text = "${item.steps} шагов",
                                                 style = MaterialTheme.typography.titleSmall,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
