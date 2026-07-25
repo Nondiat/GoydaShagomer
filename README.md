@@ -8,7 +8,7 @@
 
 | Главный экран (Чистый запуск) | Настройки и подтверждение очистки |
 | :---: | :---: |
-| <img src="screenshots/main_screen.png" width="360" alt="Главный экран"> | <img src="screenshots/settings_dialog.png" width="360" alt="Окно сброса данных"> |
+| <img src="screenshots/main_screen_1.png" width="240" alt="Главный экран"> | <img src="screenshots/settings_dialog.png" width="240" alt="Окно сброса данных"> |
 
 ---
 
@@ -28,28 +28,5 @@
 - 🛡 **Безопасная очистка данных**:
   - Красная кнопка **«ОЧИСТИТЬ ВСЕ ДАННЫЕ»** с выравниванием по левой стороне.
   - Всплывающее подтверждающее окно с **3-секундным таймером обратного отсчета** на кнопке удаления во избежание случайного сброса.
-
----
-
-## 🛠 Технологический стек
-
-- **Язык**: Kotlin
-- **UI Фреймворк**: Jetpack Compose (Material 3)
-- **База данных**: Room DB
-- **Асинхронность**: Kotlin Coroutines & Flow
-- **Сборка**: Gradle (Kotlin DSL), Android SDK 35
-- **CI/CD**: GitHub Actions (Автоматическая сборка подписанных **Release APK v1.1.2** V2+V3)
-
----
-
-## 📦 Сборка Release APK
-
-Автоматическая сборка релизного файла выполняет компиляцию в GitHub Actions:
-```bash
-./gradlew assembleRelease
-```
-Артефакт подписывается схемами V2 + V3 и публикуется под названием **`GoydaShagomer.apk`**.
-
----
 
 <sub>Сделано нейросетью через Antigravity на модели Gemini 3.6 Flash</sub>
