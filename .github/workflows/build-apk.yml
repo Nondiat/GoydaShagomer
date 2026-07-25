@@ -26,9 +26,6 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Prepare Keystore for V2 + V3 Release Signing
         run: |
           if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
