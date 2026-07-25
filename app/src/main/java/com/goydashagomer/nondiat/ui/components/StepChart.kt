@@ -1,4 +1,4 @@
-package com.example.ui.components
+package com.goydashagomer.nondiat.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -56,9 +56,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.TimeIntervalItem
-import com.example.ui.theme.GoydaCyan
-import com.example.ui.theme.GoydaEmerald
+import com.goydashagomer.nondiat.data.TimeIntervalItem
+import com.goydashagomer.nondiat.ui.theme.GoydaCyan
+import com.goydashagomer.nondiat.ui.theme.GoydaEmerald
 
 @Composable
 fun StepChart(

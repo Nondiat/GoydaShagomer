@@ -1,4 +1,4 @@
-package com.example
+package com.goydashagomer.nondiat
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,15 +20,15 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.data.AppDatabase
-import com.example.data.StepRepository
-import com.example.data.UserSettingsRepository
-import com.example.sensor.StepSensorManager
-import com.example.ui.screens.HealthSyncOnboardingScreen
-import com.example.ui.screens.MainStepScreen
-import com.example.ui.screens.SettingsScreen
-import com.example.ui.theme.GoydaShagomerTheme
-import com.example.widget.GoydaWidgetProvider
+import com.goydashagomer.nondiat.data.AppDatabase
+import com.goydashagomer.nondiat.data.StepRepository
+import com.goydashagomer.nondiat.data.UserSettingsRepository
+import com.goydashagomer.nondiat.sensor.StepSensorManager
+import com.goydashagomer.nondiat.ui.screens.HealthSyncOnboardingScreen
+import com.goydashagomer.nondiat.ui.screens.MainStepScreen
+import com.goydashagomer.nondiat.ui.screens.SettingsScreen
+import com.goydashagomer.nondiat.ui.theme.GoydaShagomerTheme
+import com.goydashagomer.nondiat.widget.GoydaWidgetProvider
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {

@@ -1,4 +1,4 @@
-package com.example.ui.components
+package com.goydashagomer.nondiat.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,7 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.data.DateFormatSetting
+import com.goydashagomer.nondiat.data.DateFormatSetting
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date

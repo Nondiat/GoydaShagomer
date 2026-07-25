@@ -1,4 +1,4 @@
-package com.example.widget
+package com.goydashagomer.nondiat.widget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -17,12 +17,12 @@ import android.graphics.Shader
 import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
-import com.example.MainActivity
-import com.example.R
-import com.example.data.AppDatabase
-import com.example.data.AppThemeSetting
-import com.example.data.EnergyUnitSetting
-import com.example.data.UserSettingsRepository
+import com.goydashagomer.nondiat.MainActivity
+import com.goydashagomer.nondiat.R
+import com.goydashagomer.nondiat.data.AppDatabase
+import com.goydashagomer.nondiat.data.AppThemeSetting
+import com.goydashagomer.nondiat.data.EnergyUnitSetting
+import com.goydashagomer.nondiat.data.UserSettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

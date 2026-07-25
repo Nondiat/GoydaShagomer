@@ -1,4 +1,4 @@
-package com.example.ui.screens
+package com.goydashagomer.nondiat.ui.screens
 
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
@@ -44,13 +44,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import com.example.data.AppThemeSetting
-import com.example.data.DateFormatSetting
-import com.example.data.EnergyUnitSetting
-import com.example.data.MetricSystemSetting
-import com.example.data.UserSettingsRepository
-import com.example.ui.components.RotatingFooter
-import com.example.ui.components.ThemePreviewCard
+import com.goydashagomer.nondiat.data.AppThemeSetting
+import com.goydashagomer.nondiat.data.DateFormatSetting
+import com.goydashagomer.nondiat.data.EnergyUnitSetting
+import com.goydashagomer.nondiat.data.MetricSystemSetting
+import com.goydashagomer.nondiat.data.UserSettingsRepository
+import com.goydashagomer.nondiat.ui.components.RotatingFooter
+import com.goydashagomer.nondiat.ui.components.ThemePreviewCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

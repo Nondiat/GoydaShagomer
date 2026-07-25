@@ -1,4 +1,4 @@
-package com.example.ui.screens
+package com.goydashagomer.nondiat.ui.screens
 
 import android.Manifest
 import android.os.Build
@@ -39,8 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.GoydaCyan
-import com.example.ui.theme.GoydaEmerald
+import com.goydashagomer.nondiat.ui.theme.GoydaCyan
+import com.goydashagomer.nondiat.ui.theme.GoydaEmerald
 
 @Composable
 fun HealthSyncOnboardingScreen(

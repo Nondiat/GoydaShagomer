@@ -1,11 +1,11 @@
-package com.example.sensor
+package com.goydashagomer.nondiat.sensor
 
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import com.example.data.StepRepository
+import com.goydashagomer.nondiat.data.StepRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

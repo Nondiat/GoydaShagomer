@@ -1,7 +1,7 @@
-package com.example.data
+package com.goydashagomer.nondiat.data
 
 import android.content.Context
-import com.example.widget.GoydaWidgetProvider
+import com.goydashagomer.nondiat.widget.GoydaWidgetProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

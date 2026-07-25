@@ -1,4 +1,4 @@
-package com.example.ui.screens
+package com.goydashagomer.nondiat.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,14 +40,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.data.EnergyUnitSetting
-import com.example.data.MetricSystemSetting
-import com.example.data.StepRepository
-import com.example.data.TimeTab
-import com.example.data.UserSettingsRepository
-import com.example.ui.components.CustomDatePickerDialog
-import com.example.ui.components.GoalSegment
-import com.example.ui.components.StepChart
+import com.goydashagomer.nondiat.data.EnergyUnitSetting
+import com.goydashagomer.nondiat.data.MetricSystemSetting
+import com.goydashagomer.nondiat.data.StepRepository
+import com.goydashagomer.nondiat.data.TimeTab
+import com.goydashagomer.nondiat.data.UserSettingsRepository
+import com.goydashagomer.nondiat.ui.components.CustomDatePickerDialog
+import com.goydashagomer.nondiat.ui.components.GoalSegment
+import com.goydashagomer.nondiat.ui.components.StepChart
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
