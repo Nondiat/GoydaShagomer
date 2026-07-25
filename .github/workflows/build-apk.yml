@@ -90,15 +90,15 @@ jobs:
           $BUILD_TOOLS_DIR/apksigner verify --verbose GoydaShagomer.apk
 
           # Duplicate as versioned file name
-          cp GoydaShagomer.apk GoydaShagomer-v1.1.apk
+          cp GoydaShagomer.apk GoydaShagomer-v1.1.2.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GoydaShagomer-APK
+          name: GoydaShagomer
           path: |
             GoydaShagomer.apk
-            GoydaShagomer-v1.1.apk
+            GoydaShagomer-v1.1.2.apk
           retention-days: 30
 
       - name: Create GitHub Release
@@ -107,14 +107,16 @@ jobs:
         with:
           files: |
             GoydaShagomer.apk
-            GoydaShagomer-v1.1.apk
-          name: Goyda shagomer v1.1
+            GoydaShagomer-v1.1.2.apk
+          name: Goyda shagomer v1.1.2
           body: |
-            ## Release v1.1 - Goyda shagomer
-            - Package Name: `com.goydashagomer.nondiat`
-            - Version: 1.1 (build 2)
-            - Material You Dynamic Colors & Adaptive Widget 2x2
-            - V2 + V3 Signed APK
+            ## Release v1.1.2 - Goyda shagomer
+            - Version: 1.1.2 (build 3)
+            - Clean startup with 0 steps
+            - Clear all data red button with 3-second countdown timer
+            - AMOLED Material You dynamic theme integration
+            - Dynamic Pixel Launcher 2x2 widget
+            - V2 + V3 Signed Release APK
           draft: false
           prerelease: false
         env:

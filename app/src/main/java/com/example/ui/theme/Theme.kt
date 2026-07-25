@@ -66,7 +66,27 @@ fun GoydaShagomerTheme(
     val systemInDark = isSystemInDarkTheme()
 
     val colorScheme = when (appTheme) {
-        AppThemeSetting.AMOLED -> AmoledColorScheme
+        AppThemeSetting.AMOLED -> {
+            if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val baseDynamic = dynamicDarkColorScheme(context)
+                baseDynamic.copy(
+                    background = Color.Black,
+                    surface = Color.Black,
+                    surfaceDim = Color.Black,
+                    surfaceBright = Color(0xFF141414),
+                    surfaceContainer = Color.Black,
+                    surfaceContainerLowest = Color.Black,
+                    surfaceContainerLow = Color(0xFF0D0D0D),
+                    surfaceContainerHigh = Color(0xFF181818),
+                    surfaceContainerHighest = Color(0xFF222222),
+                    surfaceVariant = Color(0xFF161616),
+                    onBackground = Color.White,
+                    onSurface = Color.White
+                )
+            } else {
+                AmoledColorScheme
+            }
+        }
         AppThemeSetting.LIGHT -> {
             if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 dynamicLightColorScheme(context)

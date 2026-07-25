@@ -126,61 +126,56 @@ class GoydaWidgetProvider : AppWidgetProvider() {
             val radius = size * 0.40f
             val strokeWidth = size * 0.08f
 
-            // Material You dynamic surface & colors
-            var cardBgColor = if (isDark) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    try {
-                        ContextCompat.getColor(context, android.R.color.system_neutral1_800)
-                    } catch (e: Exception) {
-                        Color.parseColor("#222A32")
-                    }
-                } else {
-                    Color.parseColor("#222A32")
+            // Material You dynamic surface & accent colors for Pixel Launcher
+            val cardBgColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    ContextCompat.getColor(context, if (isDark) android.R.color.system_neutral1_900 else android.R.color.system_neutral1_100)
+                } catch (e: Exception) {
+                    if (isDark) Color.parseColor("#1C1B1F") else Color.parseColor("#F4EFF4")
                 }
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    try {
-                        ContextCompat.getColor(context, android.R.color.system_neutral1_100)
-                    } catch (e: Exception) {
-                        Color.parseColor("#EBF2F5")
-                    }
-                } else {
-                    Color.parseColor("#EBF2F5")
-                }
-            }
-
-            // Ensure that on AMOLED/Dark theme the background never turns pitch black (#000000 or < 22 RGB)
-            if (isDark) {
-                val r = Color.red(cardBgColor)
-                val g = Color.green(cardBgColor)
-                val b = Color.blue(cardBgColor)
-                if (r < 22 && g < 22 && b < 22) {
-                    cardBgColor = Color.rgb(0x22, 0x2A, 0x32) // Tinted Material You surface container
-                }
+                if (isDark) Color.parseColor("#1C1B1F") else Color.parseColor("#F4EFF4")
             }
 
             val primaryAccent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 try {
                     ContextCompat.getColor(context, if (isDark) android.R.color.system_accent1_200 else android.R.color.system_accent1_600)
                 } catch (e: Exception) {
-                    if (isDark) Color.parseColor("#9ECAFF") else Color.parseColor("#0061A4")
+                    if (isDark) Color.parseColor("#D0BCFF") else Color.parseColor("#6750A4")
                 }
             } else {
-                if (isDark) Color.parseColor("#00BCD4") else Color.parseColor("#00838F")
+                if (isDark) Color.parseColor("#D0BCFF") else Color.parseColor("#6750A4")
             }
 
             val trackColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 try {
                     ContextCompat.getColor(context, if (isDark) android.R.color.system_neutral2_700 else android.R.color.system_neutral2_200)
                 } catch (e: Exception) {
-                    if (isDark) Color.parseColor("#33404D") else Color.parseColor("#D0DCDE")
+                    if (isDark) Color.parseColor("#49454F") else Color.parseColor("#E7E0EC")
                 }
             } else {
-                if (isDark) Color.parseColor("#33404D") else Color.parseColor("#D0DCDE")
+                if (isDark) Color.parseColor("#49454F") else Color.parseColor("#E7E0EC")
             }
 
-            val textColorPrimary = if (isDark) Color.WHITE else Color.parseColor("#101415")
-            val textColorSecondary = if (isDark) Color.parseColor("#B0BEC5") else Color.parseColor("#455A64")
+            val textColorPrimary = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    ContextCompat.getColor(context, if (isDark) android.R.color.system_accent1_100 else android.R.color.system_neutral1_900)
+                } catch (e: Exception) {
+                    if (isDark) Color.parseColor("#E6E1E5") else Color.parseColor("#1C1B1F")
+                }
+            } else {
+                if (isDark) Color.parseColor("#E6E1E5") else Color.parseColor("#1C1B1F")
+            }
+
+            val textColorSecondary = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    ContextCompat.getColor(context, if (isDark) android.R.color.system_neutral2_200 else android.R.color.system_neutral2_700)
+                } catch (e: Exception) {
+                    if (isDark) Color.parseColor("#CAC4D0") else Color.parseColor("#49454F")
+                }
+            } else {
+                if (isDark) Color.parseColor("#CAC4D0") else Color.parseColor("#49454F")
+            }
 
             // Card background (MD3 pill card - Material You dynamic surface)
             val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

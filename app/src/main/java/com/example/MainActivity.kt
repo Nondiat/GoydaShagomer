@@ -29,6 +29,7 @@ import com.example.ui.screens.MainStepScreen
 import com.example.ui.screens.SettingsScreen
 import com.example.ui.theme.GoydaShagomerTheme
 import com.example.widget.GoydaWidgetProvider
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -50,7 +51,6 @@ class MainActivity : ComponentActivity() {
             val scope = rememberCoroutineScope()
 
             LaunchedEffect(Unit) {
-                stepRepository.seedSampleDataIfNeeded()
                 sensorManager = StepSensorManager(this@MainActivity, stepRepository, scope)
                 sensorManager.startListening()
                 GoydaWidgetProvider.updateAppWidget(this@MainActivity)
@@ -101,6 +101,14 @@ class MainActivity : ComponentActivity() {
                             settingsRepository = settingsRepository,
                             onBackClicked = {
                                 navController.popBackStack()
+                            },
+                            onClearAllDataConfirmed = {
+                                scope.launch {
+                                    stepRepository.clearAllData()
+                                    if (::sensorManager.isInitialized) {
+                                        sensorManager.resetBaseline()
+                                    }
+                                }
                             }
                         )
                     }

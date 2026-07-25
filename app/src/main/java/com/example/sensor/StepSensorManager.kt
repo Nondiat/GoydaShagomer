@@ -20,7 +20,7 @@ class StepSensorManager(
     private val stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
     private val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
-    private var initialStepCount = -1f
+    private var lastSensorValue = -1f
 
     fun startListening() {
         stepCounterSensor?.let {
@@ -34,27 +34,32 @@ class StepSensorManager(
         sensorManager.unregisterListener(this)
     }
 
+    fun resetBaseline() {
+        lastSensorValue = -1f
+    }
+
     override fun onSensorChanged(event: SensorEvent?) {
         event ?: return
-        val stepsToRecord = if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
+        if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
             val totalSensorSteps = event.values[0]
-            if (initialStepCount < 0) {
-                initialStepCount = totalSensorSteps
-                0
-            } else {
-                val diff = (totalSensorSteps - initialStepCount).toInt()
-                if (diff > 0) {
-                    initialStepCount = totalSensorSteps
-                    diff
-                } else 0
+            if (lastSensorValue < 0) {
+                lastSensorValue = totalSensorSteps
+                return
+            }
+            val delta = (totalSensorSteps - lastSensorValue).toInt()
+            if (delta in 1..9999) {
+                lastSensorValue = totalSensorSteps
+                scope.launch(Dispatchers.IO) {
+                    repository.addStepsForTodayHour(delta)
+                }
+            } else if (delta < 0) {
+                // Device rebooted, reset baseline
+                lastSensorValue = totalSensorSteps
             }
         } else if (event.sensor.type == Sensor.TYPE_STEP_DETECTOR) {
-            event.values[0].toInt()
-        } else 0
-
-        if (stepsToRecord > 0) {
+            val detectorSteps = event.values[0].toInt().coerceAtLeast(1)
             scope.launch(Dispatchers.IO) {
-                repository.addStepsForTodayHour(stepsToRecord)
+                repository.addStepsForTodayHour(detectorSteps)
             }
         }
     }

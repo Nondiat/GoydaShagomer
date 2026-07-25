@@ -111,12 +111,16 @@ fun MainStepScreen(
     }
 
     val formattedDistance = remember(totalSteps, settings.metricSystem) {
-        val km = (totalSteps * 0.00075f) // approx 0.75m per step
+        val km = (totalSteps * 0.000762f) // standard stride length: 0.762m
         if (settings.metricSystem == MetricSystemSetting.METRIC) {
-            String.format(Locale.getDefault(), "%.1f км", km)
+            if (km < 1.0f) {
+                "${(km * 1000).toInt()} м"
+            } else {
+                String.format(Locale.getDefault(), "%.2f км", km)
+            }
         } else {
             val miles = km * 0.621371f
-            String.format(Locale.getDefault(), "%.1f миль", miles)
+            String.format(Locale.getDefault(), "%.2f миль", miles)
         }
     }
 

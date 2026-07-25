@@ -31,4 +31,7 @@ interface StepDao {
 
     @Query("SELECT COUNT(*) FROM step_records")
     suspend fun getRecordCount(): Int
+
+    @Query("DELETE FROM step_records")
+    suspend fun deleteAllSteps()
 }

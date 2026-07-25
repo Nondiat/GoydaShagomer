@@ -31,60 +31,24 @@ class StepRepository(
     private val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
     suspend fun seedSampleDataIfNeeded() = withContext(Dispatchers.IO) {
-        if (stepDao.getRecordCount() > 0) return@withContext
+        // Auto-seeding disabled per user requirement: clean startup with 0 steps
+    }
 
-        val cal = Calendar.getInstance()
-        // Seed past 365 days of realistic data
-        val sampleRecords = mutableListOf<StepRecord>()
-        val todayStr = dateFormatter.format(cal.time)
-
-        for (dayOffset in 0..365) {
-            val dateCal = Calendar.getInstance()
-            dateCal.add(Calendar.DAY_OF_YEAR, -dayOffset)
-            val dateStr = dateFormatter.format(dateCal.time)
-            val isWeekend = dateCal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || dateCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
-
-            val totalDayTarget = if (isWeekend) Random.nextInt(5000, 11000) else Random.nextInt(6000, 14000)
-
-            for (hour in 0..23) {
-                val hourWeight = when (hour) {
-                    in 0..5 -> 0.01f
-                    in 6..8 -> 0.08f // Morning commute / walk
-                    in 9..11 -> 0.05f
-                    in 12..14 -> 0.12f // Lunch walk
-                    in 15..17 -> 0.08f
-                    in 18..21 -> 0.15f // Evening walk / exercise
-                    else -> 0.02f
-                }
-                val hourSteps = (totalDayTarget * hourWeight * Random.nextFloat().coerceIn(0.7f, 1.3f)).toInt().coerceAtLeast(0)
-                if (hourSteps > 0 || hour == cal.get(Calendar.HOUR_OF_DAY) && dateStr == todayStr) {
-                    val duration = (hourSteps / 80).coerceAtLeast(if (hourSteps > 0) 1 else 0)
-                    val cals = hourSteps * 0.042f
-                    sampleRecords.add(
-                        StepRecord(
-                            dateString = dateStr,
-                            hour = hour,
-                            steps = hourSteps,
-                            durationMinutes = duration,
-                            calories = cals
-                        )
-                    )
-                }
-            }
-        }
-        stepDao.insertAll(sampleRecords)
+    suspend fun clearAllData() = withContext(Dispatchers.IO) {
+        stepDao.deleteAllSteps()
         GoydaWidgetProvider.updateAppWidget(context)
     }
 
     suspend fun addStepsForTodayHour(addedSteps: Int) = withContext(Dispatchers.IO) {
+        if (addedSteps <= 0) return@withContext
         val cal = Calendar.getInstance()
         val todayStr = dateFormatter.format(cal.time)
         val hour = cal.get(Calendar.HOUR_OF_DAY)
 
         val existing = stepDao.getRecordByDateAndHour(todayStr, hour)
         val newSteps = (existing?.steps ?: 0) + addedSteps
-        val newDuration = (newSteps / 80).coerceAtLeast(1)
-        val newCals = newSteps * 0.042f
+        val newDuration = (newSteps / 100).coerceAtLeast(if (newSteps > 0) 1 else 0)
+        val newCals = newSteps * 0.04f
 
         val updatedRecord = existing?.copy(
             steps = newSteps,
